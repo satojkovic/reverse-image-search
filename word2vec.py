@@ -2,11 +2,13 @@ import numpy as np
 
 def load_word2vec_from_file(path):
     word2vec = {}
+    vec_size = 0
     with open(path, 'r') as f:
         for line in f:
             values = line.split()
             word2vec[values[0]] = list(map(float, values[1:]))
-    return word2vec
+            vec_size = len(values[1:])
+    return word2vec, vec_size
 
 def load_wordnet(path):
     syn2word, word2syn = {}, {}
@@ -31,3 +33,12 @@ def get_vec_by_word(word, word2vec, vec_size):
     for w in words:
         vec = vec + get_vec_by_word(w, word2vec, vec_size)
     return vec / len(words)
+
+def get_word2vec_from_fname(fname, syn2word, word2vec, vec_size):
+    fname = fname.split('/')
+    if 'train' in fname:
+        index = fname.index('train') + 1
+        synset = fname[index]
+        word = syn2word[synset]
+        vec = get_vec_by_word(word, word2vec, vec_size)
+        return vec
