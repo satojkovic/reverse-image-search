@@ -29,4 +29,7 @@ if __name__ == "__main__":
     train_fnames = [str(p) for p in (dataset_dir_path/'train').glob('*/images/*.JPEG')]
     train_labels = [get_word2vec_from_fname(str(p), syn2word, word2vec, vec_size) 
                     for p in tqdm((dataset_dir_path/'train').glob(pattern))]
-    print(train_fnames[0], train_labels[0])
+    train_gen = ImageGenerator(dataset_dir_path, train_fnames, train_labels,
+                               classes_size=300, batch_size=64)
+    print('Training set:', len(train_gen))
+

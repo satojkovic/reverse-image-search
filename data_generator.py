@@ -37,6 +37,6 @@ class ImageGenerator(Sequence):
 
     def on_epoch_end(self):
         # Udpates indexes after each epoch
-        self.indexes = np.arrange(len(self.fnames))
+        self.indexes = np.arange(len(self.fnames))
         if self.shuffle:
             np.random.shuffle(self.indexes)
