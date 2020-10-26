@@ -1,6 +1,6 @@
 from data_generator import ImageGenerator
 from model import DeepViSe
-from word2vec import get_word2vec_from_fname, load_word2vec_from_file, load_wordnet
+from word2vec import get_vec_by_word, get_word2vec_from_annotation, get_word2vec_from_fname, load_word2vec_from_file, load_wordnet
 
 import argparse
 from tqdm import tqdm
@@ -25,11 +25,17 @@ if __name__ == "__main__":
     syn2word, word2syn = load_wordnet(dataset_dir_path/'words.txt')
 
     # Load dataset
-    pattern = '*/images/*.JPEG'
-    train_fnames = [str(p) for p in (dataset_dir_path/'train').glob('*/images/*.JPEG')]
+    pattern = 'images/*.JPEG'
+    train_fnames = [str(p) for p in (dataset_dir_path/'train').glob('*/' + pattern)]
+    print(len(train_fnames))
     train_labels = [get_word2vec_from_fname(str(p), syn2word, word2vec, vec_size) 
                     for p in tqdm((dataset_dir_path/'train').glob(pattern))]
     train_gen = ImageGenerator(dataset_dir_path, train_fnames, train_labels,
                                classes_size=300, batch_size=64)
-    print('Training set:', len(train_gen))
+    print('The number of batches per epoch(train):', len(train_gen))
 
+    val_fnames, val_labels = get_word2vec_from_annotation(
+        dataset_dir_path, syn2word, word2vec, vec_size
+    )
+    val_gen = ImageGenerator(dataset_dir_path, val_fnames, val_labels, classes_size=300, batch_size=64)
+    print('The number of batches per epoch(val):', len(val_gen))
