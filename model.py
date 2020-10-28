@@ -27,5 +27,9 @@ class DeepViSe:
         model = Model(inputs=backbone.input, outputs=y)
         return model
 
+    def fit_generator(self, train_gen, val_gen, epochs):
+        history = self.model.fit_generator(generator=train_gen, validation_data=val_gen, epochs=epochs)
+        return history
+
 if __name__ == "__main__":
     deep_vise_model = DeepViSe()

@@ -11,6 +11,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--dataset_dir_path', required=True, help='Path to tiny-imagenet directory')
     parser.add_argument('--word_embeddings', required=True, help='Path to pretrained word embeddings')
+    parser.add_argument('--epochs', required=True, type=int, help='Number of epochs')
     args = parser.parse_args()
 
     dataset_dir_path = pathlib.Path(args.dataset_dir_path)
@@ -27,9 +28,8 @@ if __name__ == "__main__":
     # Load dataset
     pattern = 'images/*.JPEG'
     train_fnames = [str(p) for p in (dataset_dir_path/'train').glob('*/' + pattern)]
-    print(len(train_fnames))
     train_labels = [get_word2vec_from_fname(str(p), syn2word, word2vec, vec_size) 
-                    for p in tqdm((dataset_dir_path/'train').glob(pattern))]
+                    for p in tqdm((dataset_dir_path/'train').glob('*/' + pattern))]
     train_gen = ImageGenerator(dataset_dir_path, train_fnames, train_labels,
                                classes_size=300, batch_size=64)
     print('The number of batches per epoch(train):', len(train_gen))
@@ -39,3 +39,10 @@ if __name__ == "__main__":
     )
     val_gen = ImageGenerator(dataset_dir_path, val_fnames, val_labels, classes_size=300, batch_size=64)
     print('The number of batches per epoch(val):', len(val_gen))
+
+    test_fnames = [str(p) for p in (dataset_dir_path/'test').glob(pattern)]
+    test_gen = ImageGenerator(dataset_dir_path, test_fnames, [], classes_size=300, batch_size=64)
+    print('The number of batches per epoch(test):', len(test_gen))
+
+    deep_vise_model = DeepViSe()
+    history = deep_vise_model.fit_generator(train_gen, val_gen, args.epochs)

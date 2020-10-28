@@ -11,12 +11,13 @@ class ImageGenerator(Sequence):
         self.batch_size = batch_size
         self.image_size = image_size
         self.shuffle = shuffle
+        self.indexes = np.arange(len(self.fnames))
         self.on_epoch_end()
 
     def _load_items(self, indexes):
         X = np.zeros((self.batch_size, self.image_size[0], self.image_size[1], 3), dtype=np.float32)
         y = np.zeros((self.batch_size, self.classes_size), dtype=np.float32)
-        image_paths = [self.path/self.items[i] for i in indexes]
+        image_paths = [self.path/self.fnames[i] for i in indexes]
         labels = [self.labels[i] for i in indexes]
         for index, image_path in enumerate(image_paths):
             img = image.load_img(image_path, target_size=self.image_size)
