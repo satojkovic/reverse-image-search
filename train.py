@@ -1,5 +1,5 @@
 from data_generator import ImageGenerator
-from model import DeepViSe
+from model import DeepViSe, cosine_loss
 from word2vec import get_vec_by_word, get_word2vec_from_annotation, get_word2vec_from_fname, load_word2vec_from_file, load_wordnet
 
 import argparse
@@ -44,5 +44,6 @@ if __name__ == "__main__":
     test_gen = ImageGenerator(dataset_dir_path, test_fnames, [], classes_size=300, batch_size=64)
     print('The number of batches per epoch(test):', len(test_gen))
 
-    deep_vise_model = DeepViSe()
+    # Training
+    deep_vise_model = DeepViSe(loss_func=cosine_loss)
     history = deep_vise_model.fit_generator(train_gen, val_gen, args.epochs)
