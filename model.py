@@ -32,6 +32,9 @@ class DeepViSe:
         history = self.model.fit_generator(generator=train_gen, validation_data=val_gen, epochs=epochs)
         return history
 
+    def save(self, model_path):
+        self.model.save(model_path)
+
 def cosine_loss(y, y_hat):
     # Normalize
     y = tf.math.l2_normalize(y, axis=1)

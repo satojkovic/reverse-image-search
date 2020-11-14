@@ -47,3 +47,6 @@ if __name__ == "__main__":
     # Training
     deep_vise_model = DeepViSe(loss_func=cosine_loss)
     history = deep_vise_model.fit_generator(train_gen, val_gen, args.epochs)
+
+    # Save the trained model
+    deep_vise_model.save('deep_vise_model.h5')
