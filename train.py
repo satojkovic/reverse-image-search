@@ -12,6 +12,7 @@ if __name__ == "__main__":
     parser.add_argument('--dataset_dir_path', required=True, help='Path to tiny-imagenet directory')
     parser.add_argument('--word_embeddings', required=True, help='Path to pretrained word embeddings')
     parser.add_argument('--epochs', required=True, type=int, help='Number of epochs')
+    parser.add_argument('--save_model_path', required=True, help='Path to output h5 file')
     args = parser.parse_args()
 
     dataset_dir_path = pathlib.Path(args.dataset_dir_path)
@@ -49,4 +50,4 @@ if __name__ == "__main__":
     history = deep_vise_model.fit_generator(train_gen, val_gen, args.epochs)
 
     # Save the trained model
-    deep_vise_model.save('deep_vise_model.h5')
+    deep_vise_model.save(args.save_model_path)
