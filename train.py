@@ -32,17 +32,17 @@ if __name__ == "__main__":
     train_labels = [get_word2vec_from_fname(str(p), syn2word, word2vec, vec_size) 
                     for p in tqdm((dataset_dir_path/'train').glob('*/' + pattern))]
     train_gen = ImageGenerator(dataset_dir_path, train_fnames, train_labels,
-                               classes_size=300, batch_size=64)
+                               vec_size=vec_size, batch_size=64)
     print('The number of batches per epoch(train):', len(train_gen))
 
     val_fnames, val_labels = get_word2vec_from_annotation(
         dataset_dir_path, syn2word, word2vec, vec_size
     )
-    val_gen = ImageGenerator(dataset_dir_path, val_fnames, val_labels, classes_size=300, batch_size=64)
+    val_gen = ImageGenerator(dataset_dir_path, val_fnames, val_labels, vec_size=vec_size, batch_size=64)
     print('The number of batches per epoch(val):', len(val_gen))
 
     test_fnames = [str(p) for p in (dataset_dir_path/'test').glob(pattern)]
-    test_gen = ImageGenerator(dataset_dir_path, test_fnames, [], classes_size=300, batch_size=64)
+    test_gen = ImageGenerator(dataset_dir_path, test_fnames, [], vec_size=vec_size, batch_size=64)
     print('The number of batches per epoch(test):', len(test_gen))
 
     # Training
