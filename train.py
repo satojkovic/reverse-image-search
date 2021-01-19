@@ -11,7 +11,8 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--dataset_dir_path', required=True, help='Path to tiny-imagenet directory')
     parser.add_argument('--word_embeddings', required=True, help='Path to pretrained word embeddings')
-    parser.add_argument('--epochs', required=True, type=int, help='Number of epochs')
+    parser.add_argument('--epochs', type=int, default=100, help='Number of epochs')
+    parser.add_argument('--batch_size', type=int, default=64, help='Batch size')
     parser.add_argument('--save_model_path', required=True, help='Path to output h5 file')
     args = parser.parse_args()
 
@@ -38,11 +39,11 @@ if __name__ == "__main__":
     val_fnames, val_labels = get_word2vec_from_annotation(
         dataset_dir_path, syn2word, word2vec, vec_size
     )
-    val_gen = ImageGenerator(dataset_dir_path, val_fnames, val_labels, vec_size=vec_size, batch_size=64)
+    val_gen = ImageGenerator(dataset_dir_path, val_fnames, val_labels, vec_size=vec_size, batch_size=args.batch_size)
     print('The number of batches per epoch(val):', len(val_gen))
 
     test_fnames = [str(p) for p in (dataset_dir_path/'test').glob(pattern)]
-    test_gen = ImageGenerator(dataset_dir_path, test_fnames, [], vec_size=vec_size, batch_size=64)
+    test_gen = ImageGenerator(dataset_dir_path, test_fnames, [], vec_size=vec_size, batch_size=args.batch_size)
     print('The number of batches per epoch(test):', len(test_gen))
 
     # Training
