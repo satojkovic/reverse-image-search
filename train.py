@@ -11,9 +11,9 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--dataset_dir_path', required=True, help='Path to tiny-imagenet directory')
     parser.add_argument('--word_embeddings', required=True, help='Path to pretrained word embeddings')
-    parser.add_argument('--epochs', type=int, default=100, help='Number of epochs')
-    parser.add_argument('--batch_size', type=int, default=64, help='Batch size')
     parser.add_argument('--save_model_path', required=True, help='Path to output h5 file')
+    parser.add_argument('--batch_size', type=int, default=64, help='Batch size(default: 64)')
+    parser.add_argument('--epochs', type=int, default=100, help='Number of epochs(default: 100)')
     args = parser.parse_args()
 
     dataset_dir_path = pathlib.Path(args.dataset_dir_path)

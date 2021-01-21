@@ -2,12 +2,11 @@ import numpy as np
 
 def load_word2vec_from_file(path):
     word2vec = {}
-    vec_size = 0
     with open(path, 'r') as f:
         for line in f:
             values = line.split()
             word2vec[values[0]] = list(map(float, values[1:]))
-            vec_size = len(values[1:])
+    vec_size = len(word2vec[list(word2vec.keys())[0]])
     return word2vec, vec_size
 
 def load_wordnet(path):
