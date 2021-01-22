@@ -5,14 +5,16 @@ from keras.models import Model
 from keras.optimizers import Adam
 
 class DeepViSe:
-    def __init__(self, loss_func):
-        self.classes_size = 300
+    def __init__(self, loss_func, vec_size):
+        # DeepViSe outputs a word vector
+        self.vec_size = vec_size
         self.model = self._create_model()
         self.loss_func = loss_func
-        adam = Adam(lr=0.001, epsilon=0.01, decay=0.0001)
+        adam = Adam(lr=0.0001, epsilon=0.01, decay=0.0001)
         self.model.compile(adam, loss=self.loss_func, metrics=['accuracy'])
 
     def _create_model(self):
+        # Replace last three layers of ResNet50 with linear layers to output a word vector
         backbone = ResNet50(weights='imagenet')
         limit = len(backbone.layers) - 3
         for index, layer in enumerate(backbone.layers):
@@ -24,16 +26,13 @@ class DeepViSe:
         x = GlobalAveragePooling2D()(x)
         x = Dense(1024, activation='relu')(x)
         x = BatchNormalization()(x)
-        y = Dense(self.classes_size, activation='linear')(x)
+        y = Dense(self.vec_size, activation='linear')(x)
         model = Model(inputs=backbone.input, outputs=y)
         return model
 
-    def fit_generator(self, train_gen, val_gen, epochs):
-        history = self.model.fit_generator(generator=train_gen, validation_data=val_gen, epochs=epochs)
+    def fit_generator(self, train_gen, val_gen, epochs, callbacks):
+        history = self.model.fit_generator(generator=train_gen, validation_data=val_gen, epochs=epochs, callbacks=callbacks)
         return history
-
-    def save(self, model_path):
-        self.model.save(model_path)
 
 def cosine_loss(y, y_hat):
     # Normalize
@@ -43,4 +42,4 @@ def cosine_loss(y, y_hat):
     return loss
 
 if __name__ == "__main__":
-    deep_vise_model = DeepViSe()
+    deep_vise_model = DeepViSe(loss_func=cosine_loss, vec_size=300)

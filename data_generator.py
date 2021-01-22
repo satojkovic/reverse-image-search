@@ -3,10 +3,10 @@ from keras.preprocessing import image
 import numpy as np
 
 class ImageGenerator(Sequence):
-    def __init__(self, path, fnames, labels, vec_size, batch_size, image_size=(224, 224), shuffle=True):
+    def __init__(self, path, fnames, wvecs, vec_size, batch_size, image_size=(224, 224), shuffle=True):
         self.path = path
         self.fnames = fnames
-        self.labels = labels
+        self.wvecs = wvecs
         self.vec_size = vec_size
         self.batch_size = batch_size
         self.image_size = image_size
@@ -18,13 +18,13 @@ class ImageGenerator(Sequence):
         X = np.zeros((self.batch_size, self.image_size[0], self.image_size[1], 3), dtype=np.float32)
         y = np.zeros((self.batch_size, self.vec_size), dtype=np.float32)
         image_paths = [self.path/self.fnames[i] for i in indexes]
-        labels = [self.labels[i] for i in indexes]
+        wvecs = [self.wvecs[i] for i in indexes]
         for index, image_path in enumerate(image_paths):
             img = image.load_img(image_path, target_size=self.image_size)
             img = image.img_to_array(img)
-            label = labels[index]
+            wvec = wvecs[index]
             X[index, :] = img
-            y[index, :] = label
+            y[index, :] = wvec
         return X, y
 
     def __getitem__(self, index):
