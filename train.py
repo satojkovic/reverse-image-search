@@ -25,19 +25,19 @@ if __name__ == "__main__":
         sys.exit(-1)
 
     # Load wordnet
-    syn2word, word2syn = load_wordnet(dataset_dir_path/'words.txt')
+    id2word, word2id = load_wordnet(dataset_dir_path/'words.txt')
 
     # Load dataset
     pattern = 'images/*.JPEG'
     train_fnames = [str(p) for p in (dataset_dir_path/'train').glob('*/' + pattern)]
-    train_labels = [get_word2vec_from_fname(str(p), syn2word, word2vec, vec_size) 
+    train_labels = [get_word2vec_from_fname(str(p), id2word, word2vec, vec_size) 
                     for p in tqdm((dataset_dir_path/'train').glob('*/' + pattern))]
     train_gen = ImageGenerator(dataset_dir_path, train_fnames, train_labels,
                                vec_size=vec_size, batch_size=64)
     print('The number of batches per epoch(train):', len(train_gen))
 
     val_fnames, val_labels = get_word2vec_from_annotation(
-        dataset_dir_path, syn2word, word2vec, vec_size
+        dataset_dir_path, id2word, word2vec, vec_size
     )
     val_gen = ImageGenerator(dataset_dir_path, val_fnames, val_labels, vec_size=vec_size, batch_size=args.batch_size)
     print('The number of batches per epoch(val):', len(val_gen))

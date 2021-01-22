@@ -10,15 +10,15 @@ def load_word2vec_from_file(path):
     return word2vec, vec_size
 
 def load_wordnet(path):
-    syn2word, word2syn = {}, {}
+    id2word, word2id = {}, {}
     with open(path, 'r') as f:
         for line in f:
             tokens = line.rstrip().split()
-            synset = tokens[0]
+            wordnet_id = tokens[0]
             word = tokens[1].lower()
-            syn2word[synset] = word
-            word2syn[word] = synset
-    return syn2word, word2syn
+            id2word[wordnet_id] = word
+            word2id[word] = wordnet_id
+    return id2word, word2id
 
 def get_vec_by_word(word, word2vec, vec_size):
     if word in word2vec:
@@ -33,24 +33,24 @@ def get_vec_by_word(word, word2vec, vec_size):
         vec = vec + get_vec_by_word(w, word2vec, vec_size)
     return vec / len(words)
 
-def get_word2vec_from_fname(fname, syn2word, word2vec, vec_size):
+def get_word2vec_from_fname(fname, id2word, word2vec, vec_size):
     fnames = fname.split('/')
     if 'train' in fnames:
         index = fnames.index('train') + 1
-        synset = fnames[index]
-        word = syn2word[synset]
+        id = fnames[index]
+        word = id2word[id]
         vec = get_vec_by_word(word, word2vec, vec_size)
         return vec
 
-def get_word2vec_from_annotation(dataset_dir_path, syn2word, word2vec, vec_size):
+def get_word2vec_from_annotation(dataset_dir_path, id2word, word2vec, vec_size):
     valid_fnames = []
     valid_labels = []
     with open(dataset_dir_path/'val/val_annotations.txt') as f:
         for line in f:
-            fname, synset = line.strip().split('\t')[:2]
+            fname, id = line.strip().split('\t')[:2]
             fname = (dataset_dir_path/'val/images')/fname
             valid_fnames.append(fname)
-            word = syn2word[synset]
+            word = id2word[id]
             vec = get_vec_by_word(word, word2vec, vec_size)
             valid_labels.append(vec)
     return valid_fnames, valid_labels
