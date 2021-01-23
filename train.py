@@ -48,5 +48,6 @@ if __name__ == "__main__":
 
     # Training
     deep_vise_model = DeepViSe(loss_func=cosine_loss, vec_size=vec_size)
-    ckpt_callback = keras.callbacks.ModelCheckpoint('deep_vise_model.{epoch:02d}-{acc:0.5f}.hdf5', verbose=0, save_best_only=True)
+    ckpt_callback = keras.callbacks.ModelCheckpoint('deep_vise_model.{epoch:02d}-{val_accuracy:0.5f}.hdf5', monitor='val_acc',
+                                                    verbose=0, save_best_only=True)
     history = deep_vise_model.fit_generator(train_gen, val_gen, args.epochs, callbacks=[ckpt_callback])
