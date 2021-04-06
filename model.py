@@ -1,45 +1,31 @@
-import tensorflow as tf
-from keras.applications.resnet50 import ResNet50
-from keras.layers import Dense, Dropout, GlobalAveragePooling2D, BatchNormalization
-from keras.models import Model
-from keras.optimizers import Adam
+import torch
+from torch import nn
+import torch.nn.functional as F
 
-class DeepViSe:
-    def __init__(self, loss_func, vec_size):
-        # DeepViSe outputs a word vector
-        self.vec_size = vec_size
-        self.model = self._create_model()
-        self.loss_func = loss_func
-        adam = Adam(lr=0.0001, epsilon=0.01, decay=0.0001)
-        self.model.compile(adam, loss=self.loss_func, metrics=['accuracy'])
 
-    def _create_model(self):
-        # Replace last three layers of ResNet50 with linear layers to output a word vector
-        backbone = ResNet50(weights='imagenet')
-        limit = len(backbone.layers) - 3
-        for index, layer in enumerate(backbone.layers):
-            if index > limit:
-                break
-            layer.trainable = False
-        x = backbone.layers[-3].output
-        x = Dropout(rate=0.3)(x)
-        x = GlobalAveragePooling2D()(x)
-        x = Dense(1024, activation='relu')(x)
-        x = BatchNormalization()(x)
-        y = Dense(self.vec_size, activation='linear')(x)
-        model = Model(inputs=backbone.input, outputs=y)
-        return model
+class TrainerBase(nn.Module):
+    def training_step(self, batch):
+        images, targets = batch
+        out = self(images)
+        loss = 1 - F.cosine_similarity(out, targets).mean()
+        return loss
 
-    def fit_generator(self, train_gen, val_gen, epochs, callbacks):
-        history = self.model.fit_generator(generator=train_gen, validation_data=val_gen, epochs=epochs, callbacks=callbacks)
-        return history
+    def validation_step(self, batch):
+        images, targets = batch
+        out = self(images)
+        loss = 1 - F.cosine_similarity(out, targets).mean()
+        return {'val_loss': loss.detach()}
 
-def cosine_loss(y, y_hat):
-    # Normalize
-    y = tf.math.l2_normalize(y, axis=1)
-    y_hat = tf.math.l2_normalize(y_hat, axis=1)
-    loss = tf.compat.v1.losses.cosine_distance(y, y_hat, axis=1)
-    return loss
+    def validation_epoch_end(self, outputs):
+        batch_losses = [x['val_loss'] for x in outputs]
+        epoch_loss = torch.stack(batch_losses).mean()
+        return {'val_loss': epoch_loss.item()}
+
+    def epoch_end(self, epoch, result):
+        print('Epoch [{}], train_loss: {:.4f}, val_loss: {:.4f}'.format(
+            epoch, result['train_loss'], result['val_loss']
+        ))
+
 
 if __name__ == "__main__":
-    deep_vise_model = DeepViSe(loss_func=cosine_loss, vec_size=300)
+    pass
