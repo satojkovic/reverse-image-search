@@ -2,6 +2,7 @@ import torch
 from torch import nn
 import torch.nn.functional as F
 import torchvision.models as models
+from tqdm import tqdm
 
 
 class TrainerBase(nn.Module):
@@ -48,6 +49,35 @@ class DeviseModel(TrainerBase):
 
     def forward(self, xb):
         return self.network(xb)
+
+
+@torch.no_grad()
+def evaluate(model, val_loader):
+    model.eval()
+    outputs = [model.validation_step(batch) for batch in val_loader]
+    return model.validation_epoch_end(outputs)
+
+
+def fit(epochs, lr, model, train_loader, val_loader, opt_func=torch.optim.SGD):
+    torch.cuda.empty_cache()
+    history = []
+    optimizer = opt_func(model.parameters(), lr)
+    for epoch in range(epochs):
+        model.train()
+        train_losses = []
+        for batch in tqdm(train_loader):
+            # Traininig phase
+            loss = model.training_step(batch)
+            train_losses.append(loss)
+            loss.backward()
+            optimizer.step()
+            optimizer.zero_grad()
+        # Validation phase
+        result = evaluate(model, val_loader)
+        result['train_loss'] = torch.stack(train_losses).mean().item()
+        model.epoch_end(epoch, result)
+        history.append(result)
+    return history
 
 
 if __name__ == "__main__":
