@@ -18,3 +18,21 @@ class DeviceDataLoader:
 
     def __len__(self):
         reutrn len(self.data_loader)
+
+
+class DeviseDataset(Dataset):
+    def __init__(self, images, vecs, transform=None):
+        self.images = images
+        self.vecs = vecs
+        self.transform = transform
+
+    def __len__(self):
+        return len(self.images)
+
+    def __getitem__(self, idx):
+        img_path = self.images[idx]
+        img_vec = self.vec[idx]
+        img = Image.open(img_path).convert('RGB')
+        if self.transform:
+            img = self.transform(img)
+        return img, img_vec
