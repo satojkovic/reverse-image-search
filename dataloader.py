@@ -17,7 +17,7 @@ class DeviceDataLoader:
             yield to_device(d, self.device)
 
     def __len__(self):
-        reutrn len(self.data_loader)
+        return len(self.data_loader)
 
 
 class DeviseDataset(Dataset):
