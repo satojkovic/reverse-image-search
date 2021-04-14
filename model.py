@@ -3,6 +3,7 @@ from torch import nn
 import torch.nn.functional as F
 import torchvision.models as models
 from tqdm import tqdm
+from torchsummary import summary
 
 
 class TrainerBase(nn.Module):
@@ -81,4 +82,5 @@ def fit(epochs, lr, model, train_loader, val_loader, opt_func=torch.optim.SGD):
 
 
 if __name__ == "__main__":
-    pass
+    model = DeviseModel()
+    summary(model, (3, 200, 200))

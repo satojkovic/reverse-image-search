@@ -1,4 +1,5 @@
-from torch.utils.data import Dataset, DataLoader
+from torch.utils.data import Dataset
+from PIL import Image
 
 
 def to_device(data, device):
@@ -31,7 +32,7 @@ class DeviseDataset(Dataset):
 
     def __getitem__(self, idx):
         img_path = self.images[idx]
-        img_vec = self.vec[idx]
+        img_vec = self.vecs[idx]
         img = Image.open(img_path).convert('RGB')
         if self.transform:
             img = self.transform(img)
