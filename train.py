@@ -1,5 +1,5 @@
 import torch
-from dataloader import DeviceDataLoader, DeviseDataset, to_device
+from dataloader import DeviceDataLoader, DeviseDataset, to_device, load_pickle
 import pickle
 import torchvision.transforms as transforms
 from torch.utils.data import DataLoader
@@ -11,13 +11,6 @@ def get_default_device():
         return torch.device('cuda')
     else:
         return torch.device('cpu')
-
-
-def load_pickle(pickle_path):
-    with open(pickle_path, 'rb') as f:
-        data = pickle.load(f)
-    print('Loaded: {} {}'.format(pickle_path, data.shape))
-    return data
 
 
 if __name__ == '__main__':

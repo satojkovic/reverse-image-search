@@ -81,6 +81,17 @@ def fit(epochs, lr, model, train_loader, val_loader, opt_func=torch.optim.SGD):
     return history
 
 
+@torch.no_grad()
+def predict_dl_batch(dl, model):
+    batch_probs = []
+    model.eval()
+    for xb, _ in tqdm(dl):
+        pred_word_vecs = model(xb)
+        batch_probs.append(pred_word_vecs)
+    batch_probs = torch.cat(batch_probs)
+    return batch_probs.numpy()
+
+
 if __name__ == "__main__":
     model = DeviseModel()
     summary(model, (3, 200, 200))

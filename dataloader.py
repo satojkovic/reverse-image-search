@@ -1,5 +1,6 @@
 from torch.utils.data import Dataset
 from PIL import Image
+import pickle
 
 
 def to_device(data, device):
@@ -37,3 +38,10 @@ class DeviseDataset(Dataset):
         if self.transform:
             img = self.transform(img)
         return img, img_vec
+
+
+def load_pickle(pickle_path):
+    with open(pickle_path, 'rb') as f:
+        data = pickle.load(f)
+    print('Loaded: {} {}'.format(pickle_path, data.shape))
+    return data
