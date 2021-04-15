@@ -34,6 +34,7 @@ class TrainerBase(nn.Module):
 class DeviseModel(TrainerBase):
     def __init__(self, embed_dim=300):
         super().__init__()
+        self.embed_dim = embed_dim
         self.network = models.resnet18(pretrained=True)
         # Replace last layer
         num_features = self.network.fc.in_features
@@ -45,7 +46,7 @@ class DeviseModel(TrainerBase):
             nn.ReLU(inplace=True),
             nn.BatchNorm1d(num_features // 2),
             nn.Dropout(p=0.5),
-            nn.Linear(num_features//2, embed_dim)
+            nn.Linear(num_features//2, self.embed_dim)
         )
 
     def forward(self, xb):

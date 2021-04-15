@@ -5,13 +5,20 @@ from annoy import AnnoyIndex
 from dataloader import load_pickle, DeviseDataset
 import torchvision.transforms as transforms
 from torch.utils.data import DataLoader
+import argparse
+
 
 if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--fasttext_file_path', required=True,
+                        help='Path to fasttext bin file')
+    parser.add_argument('--query', required=True, help='Qeury word')
+    args = parser.parse_args()
+
     model = DeviseModel()
     model.load_state_dict(torch.load('devise_resnet18.pth'))
     model.eval()
 
-    # ANN
     batch_size = 64
     val_images = load_pickle('val_images.pkl')
     val_image_word_vecs = load_pickle('val_image_word_vecs.pkl')
@@ -27,3 +34,10 @@ if __name__ == '__main__':
     val_dl = DataLoader(val_dataset, batch_size*2,
                         shuffle=False, num_workers=0, pin_memory=True)
     pred_word_vecs = predict_dl_batch(val_dl, model)
+
+    # ANN oh yeah
+    ann = AnnoyIndex(model.embed_dim, metric='euclidean')
+    ntree = 100
+    for i, pred_word_vec in enumerate(pred_word_vecs):
+        ann.add_item(i, pred_word_vec)
+    _ = ann.build(ntree)
