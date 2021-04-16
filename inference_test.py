@@ -6,6 +6,12 @@ from dataloader import load_pickle, DeviseDataset
 import torchvision.transforms as transforms
 from torch.utils.data import DataLoader
 import argparse
+import fasttext as ft
+import matplotlib.pyplot as plt
+
+
+def show_preds(idxs, dataset, images):
+    pass
 
 
 if __name__ == '__main__':
@@ -41,3 +47,8 @@ if __name__ == '__main__':
     for i, pred_word_vec in enumerate(pred_word_vecs):
         ann.add_item(i, pred_word_vec)
     _ = ann.build(ntree)
+
+    ft_vecs = ft.load_model(args.fasttext_file_path)
+    vec = ft_vecs.get_word_vector(args.query)
+    idxs = ann.get_nns_by_vector(vec, 9)
+    show_preds(idxs, val_dataset, val_images)
