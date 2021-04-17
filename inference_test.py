@@ -8,10 +8,24 @@ from torch.utils.data import DataLoader
 import argparse
 import fasttext as ft
 import matplotlib.pyplot as plt
+from pathlib import Path
+
+
+def denorm(img, mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]):
+    return img*torch.Tensor(std).unsqueeze(1).unsqueeze(1)+torch.Tensor(mean).unsqueeze(1).unsqueeze(1)
 
 
 def show_preds(idxs, dataset, images):
-    pass
+    fig, axes = plt.subplots(nrows=3, ncols=3, figsize=(8, 8))
+    for ax, img_idx in zip(axes.flatten(), idxs):
+        path = Path(images[img_idx])
+        data = denorm(dataset[img_idx][0]).clamp(0, 1)
+        data = data.permute(1, 2, 0).numpy()
+        ax.imshow(data)
+        title = path.parent.name.rpartition('.')[-1]
+        ax.set_title(title)
+        ax.axis('off')
+    plt.show()
 
 
 if __name__ == '__main__':
