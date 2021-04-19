@@ -37,7 +37,6 @@ if __name__ == '__main__':
 
     model = DeviseModel()
     model.load_state_dict(torch.load('devise_resnet18.pth'))
-    model.eval()
 
     batch_size = 64
     val_images = load_pickle('val_images.pkl')
