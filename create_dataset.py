@@ -11,6 +11,14 @@ def dump(pickle_path, data):
     print('Dumped:', pickle_path)
 
 
+def dump_classes(text_path, data):
+    with open(text_path, 'w') as f:
+        for d in data:
+            f.writelines(d)
+            f.writelines('\n')
+    print('Dumped:', text_path)
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--fasttext_filepath', required=True,
@@ -52,7 +60,8 @@ if __name__ == '__main__':
             test_images += class_images
             test_image_word_vecs += [lc_vec_d[class_name]] * len(class_images)
         else:
-            classes.append(class_name)
+            class_names = [class_name] * len(class_images)
+            classes += class_names
             train_images += class_images
             train_image_word_vecs += [lc_vec_d[class_name]] * len(class_images)
     train_image_word_vecs = np.stack(train_image_word_vecs)
@@ -71,3 +80,6 @@ if __name__ == '__main__':
     dump('train_image_word_vecs.pkl', train_image_word_vecs[train_ids])
     dump('val_image_word_vecs.pkl', train_image_word_vecs[val_ids])
     dump('test_image_word_vecs.pkl', test_image_word_vecs)
+    dump_classes('train_classes.txt', np.array(classes)[train_ids])
+    dump_classes('val_classes.txt', np.array(classes)[val_ids])
+    dump_classes('test_classes.txt', test_classes)
