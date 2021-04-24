@@ -55,7 +55,7 @@ if __name__ == '__main__':
     pred_word_vecs = predict_dl_batch(val_dl, model)
 
     # ANN oh yeah
-    ann = AnnoyIndex(model.embed_dim, metric='euclidean')
+    ann = AnnoyIndex(model.embed_dim, metric='angular')
     ntree = 100
     for i, pred_word_vec in enumerate(pred_word_vecs):
         ann.add_item(i, pred_word_vec)
