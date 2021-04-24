@@ -1,12 +1,17 @@
 # DeepViSe
 
-Deep Visual-Semantic Embedding Model with Tensorflow
+Yet another implementation of DeViSE model (inspired by [Building a Reverse Image Search AI using PyTorch](https://vijayabhaskar96.medium.com/fun-project-devise-on-pytorch-83eb09694d41)).
 
-## Features
+# Description
 
-* Vision Model: ResNet50
-* Language Model: Glove
+DeViSE (A Deep Visual-Semantic Embedding Model) is proposed by A.Frome et al. at NIPS2013.
 
-## Reference
+This repository provides training and test environment in PyTorch.
 
-[DeViSE: A Deep Visual-Semantic Embedding Model](https://static.googleusercontent.com/media/research.google.com/ja//pubs/archive/41473.pdf)
+# Usecase
+
+## Keyword search
+
+Search "car".
+
+<img src="https://github.com/satojkovic/DeepViSe/raw/master/results/car.png" width="640">
